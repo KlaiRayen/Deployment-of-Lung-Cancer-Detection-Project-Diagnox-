@@ -1,1 +1,1 @@
-# LungCancerDetection
+# Diagnox

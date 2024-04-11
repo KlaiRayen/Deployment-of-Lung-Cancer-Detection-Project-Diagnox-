@@ -1,4 +1,32 @@
-from django.shortcuts import redirect, render
+from accounts.models import Profile
+from django.shortcuts import render
+from django.contrib import messages
 
 def acc(request):
-    return render(request, 'index.html')
+    user_pk = request.session.get('userconn')  # Retrieve user's primary key from session
+    if user_pk:
+        try:
+            user_conn = Profile.objects.get(pk=user_pk)  # Retrieve user object using primary key
+        except Profile.DoesNotExist:
+            user_conn = None
+    else:
+        user_conn = None
+    return render(request, 'index.html', {'user_conn': user_conn})
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_v(request):
+    logout(request)
+    return redirect('/')  # Redirect to the desired page after logout (e.g., 'index.html')
+
+
+def profile_picture_upload(request):
+    if request.method == 'POST' and request.FILES['profile_picture']:
+        profile_picture = request.FILES['profile_picture']
+        # Retrieve the current user's profile
+        user_profile = request.user.profile
+        # Update the profile picture field with the uploaded file
+        user_profile.img = profile_picture
+        # Save the profile instance
+        user_profile.save()
+    return redirect('profile')  # Redirect back to the profile page

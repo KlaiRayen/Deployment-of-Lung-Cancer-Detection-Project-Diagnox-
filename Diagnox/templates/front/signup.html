@@ -1,0 +1,71 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<section class="team-layout2 pb-80">
+    <div class="bg-img"><img src="assets/images/banners/3.jpg" alt="banner"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-12 col-md-8 col-lg-6">
+                <div class="contact-panel text-center mb-50">
+                    <h4 class="contact-panel__title mb-4">Sign up</h4>
+                    <!-- Form Error Messages -->
+                   
+                    <!-- End Form Error Messages -->
+                    <form class="contact-panel__form" method="post" action="{% url 'signup' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <i class="icon-news form-group-icon"></i>
+                                    <input type="text" class="form-control" placeholder="First Name" id="contact-first-name" name="first_name" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <i class="icon-news form-group-icon"></i>
+                                    <input type="text" class="form-control" placeholder="Last Name" id="contact-last-name" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <i class="icon-email form-group-icon"></i>
+                            <input type="email" class="form-control" placeholder="Email" id="contact-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-lock form-group-icon"></i> <!-- Font Awesome lock icon -->
+                            <input type="password" class="form-control" placeholder="Password" id="contact-password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-lock form-group-icon"></i> <!-- Font Awesome lock icon -->
+                            <input type="password" class="form-control" placeholder="Confirm Password" id="contact-confirm-password" name="confirm_password" required>
+                        </div>
+                        <div class="form-error-message" style="color: red; margin-bottom: 10px;">
+                            {% if form.errors %}
+                                <ul>
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn__secondary btn__rounded btn__block btn__xhight mt-4">
+                            <span>Sign up</span> <i class="icon-arrow-right"></i>
+                        </button>
+                        <!-- End Sign up Button -->
+                        <div class="contact-result"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+  {% endblock %}

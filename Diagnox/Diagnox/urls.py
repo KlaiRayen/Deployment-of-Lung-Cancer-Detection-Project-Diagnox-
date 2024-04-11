@@ -17,7 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from accounts import views as v2
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.acc),
-]
+    path('',views.acc,name="index"),
+    path('signin',v2.signin,name="signin"),
+    path('signup',v2.signup,name="signup"),
+    path('logout/', views.logout_v, name='logout'),
+    path('profile',v2.profile,name="profile"),
+    path('password_change',v2.password_change,name="password_change"),
+    path('profile/picture/upload/', views.profile_picture_upload, name='profile_picture_upload'),
+
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

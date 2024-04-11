@@ -1,0 +1,53 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    .aaa  {
+        height: 60px; /* Adjust height as desired */
+        width: 180px; /* Adjust width as desired */
+    }
+</style>
+<section class="team-layout2 pb-80">
+    <div class="bg-img"><img src="assets/images/banners/3.jpg" alt="banner"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-12 col-md-8 col-lg-6">
+                <div class="contact-panel text-center mb-50">
+                    <h4 class="contact-panel__title mb-4">Sign in</h4>
+                    <form class="contact-panel__form" method="post" action="{% url 'signin' %}"  >
+                        {% csrf_token %}
+                            <div class="form-group">
+                            <i class="icon-email form-group-icon"></i>
+                            <input type="email" class="form-control" placeholder="Email" id="contact-email"  name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-lock form-group-icon"></i> <!-- Font Awesome lock icon -->
+                            <input type="password" class="form-control" placeholder="Password" id="contact-password" name="password" required>
+                        </div>
+                        <div class="form-error-message" style="color: red; margin-bottom: 10px;">
+                            {% if form.errors %}
+                                <li>Incorrect email or password.</li>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn  btn__secondary btn__rounded btn__block btn__xhight mt-20">
+                                <span>Sign in</span> 
+                            </button>
+                    </div>
+                        <br>
+                        <p class="mt-3">New to Diagnox?</p>
+                        <a  href="{% url 'signup' %}" class="btn btn__secondary btn__outlined btn__rounded">
+                            <span>Create your Diagnox account</span>
+                        </a>
+                        <div class="contact-result"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  {% endblock %}

@@ -8,19 +8,20 @@ class CustomUserManager(BaseUserManager):
     def default_profile_image():
         return 'default_profile_picture.jpg'
 
-    def create_user(self, email, password=None, cin=None, organisme=None, role=None,img=None, **extra_fields):
+    def create_user(self, email, password=None, first_name=None, last_name=None,img=None, role=None ,**extra_fields):
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
-        user = self.model(email=email, cin=cin, organisme=organisme, role=role,img=img, **extra_fields)
+        user = self.model(email=email,img=img, first_name=first_name, last_name=last_name, role=role ,**extra_fields)
+        user.setImg('def.png')
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, cin=None, organisme=None, role='Admin',img=None, **extra_fields):
+    def create_superuser(self, email, password=None, first_name=None, last_name=None, role='Admin',img=None , **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, password, cin, organisme, role,img, **extra_fields)
+        return self.create_user(email, password, first_name, last_name,img, role ,**extra_fields)
 
 class Profile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)

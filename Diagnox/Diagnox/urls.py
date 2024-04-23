@@ -20,6 +20,7 @@ from . import views
 from accounts import views as v2
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.acc,name="index"),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('profile',v2.profile,name="profile"),
     path('password_change',v2.password_change,name="password_change"),
     path('profile/picture/upload/', views.profile_picture_upload, name='profile_picture_upload'),
+    path('form',views.formulaire),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

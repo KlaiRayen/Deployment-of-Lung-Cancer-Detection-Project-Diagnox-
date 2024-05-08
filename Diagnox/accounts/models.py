@@ -58,3 +58,6 @@ class Profile(AbstractBaseUser, PermissionsMixin):
     def setEmail(self,fn):
         self.email = fn 
         self.save()
+
+    def is_doctor(self):
+        return self.role == 'doctor'

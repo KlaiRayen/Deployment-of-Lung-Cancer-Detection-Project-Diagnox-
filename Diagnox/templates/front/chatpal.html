@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatPal</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+function sendMessage() {
+    var userInput = document.getElementById("user-input").value;
+    if (userInput.trim() !== "") {
+        // Get the CSRF token from the cookie
+        var csrftoken = getCookie('csrftoken');
+        
+        // Send user input to the server
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/chatpal/", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);  // Set CSRF token
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText).response;
+                    displayMessage(userInput, "user");
+                    displayMessage(response, "bot");
+                    document.getElementById("user-input").value = "";
+                } else {
+                    console.error("Error:", xhr.statusText);
+                }
+            }
+        };
+        xhr.send("user_input=" + encodeURIComponent(userInput));
+    }
+}
+
+// Function to get CSRF token from cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function displayMessage(message, sender) {
+    var chatBox = document.getElementById("chat-box");
+    var messageDiv = document.createElement("div");
+    messageDiv.className = sender === "bot" ? "bot-message" : "user-message";
+    messageDiv.textContent = message;
+    chatBox.appendChild(messageDiv);
+}
+
+    </script>
+</body>
+</html>

@@ -31,6 +31,7 @@ urlpatterns = [
     path('password_change',v2.password_change,name="password_change"),
     path('profile/picture/upload/', views.profile_picture_upload, name='profile_picture_upload'),
     path('form',views.formulaire),
+    path('chatpal/', views.chatpal, name='chatpal'),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

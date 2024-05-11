@@ -21,6 +21,7 @@ from accounts import views as v2
 from django.conf import settings
 from django.conf.urls.static import static
 from rendezvous import views as vr
+from forum import views as forum_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +39,11 @@ urlpatterns = [
     path('fetch_time_slots', vr.fetch_time_slots, name='fetch_time_slots'),
     path('rendezvous/list', vr.showListDocRdv, name='showListDocRdv'),
     path('fetch_dr_rdvs/', vr.listDocRdv, name='fetch_dr_rdvs'),
-
-
+    path('forum', forum_views.forum_home, name='forum_home'),
+    path('forum/thread/create', forum_views.create_thread, name='create_thread'),
+   # path('thread/<int:thread_id>/', forum_views.view_thread, name='view_thread'),
+    path('forum/thread/<int:thread_id>/post/create', forum_views.create_post, name='create_post'),
+    path('forum/thread/<int:thread_id>/', forum_views.view_thread, name='view_thread'),
+    path('forum/thread/<str:cat>/', forum_views.threadPerCat, name='threadpercat'),
+    path('typeDetection',views.typedetection , name= 'typedetection')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

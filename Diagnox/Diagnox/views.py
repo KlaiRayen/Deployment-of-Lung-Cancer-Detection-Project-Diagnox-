@@ -15,6 +15,7 @@ import json
 from django.http import JsonResponse
 import os
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 def acc(request):
     user_pk = request.session.get('userconn')  # Retrieve user's primary key from session
@@ -140,3 +141,48 @@ def chatpal(request):
         return JsonResponse({'response': response})
     else:
         return render(request, 'front/chatpal.html', {'user_conn': user_conn})
+
+import os
+import io
+
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import numpy as np
+
+# Load the trained model
+model_file_path = os.path.join(settings.STATICFILES_DIRS[0], 'modelMoatez.h5')
+model = load_model(model_file_path)
+
+def typedetection(request):
+    user_conn = None
+    user_pk = request.session.get('userconn')
+    if user_pk:
+        try:
+            user_conn = Profile.objects.get(pk=user_pk)
+        except Profile.DoesNotExist:
+            pass
+    
+    if request.method == 'POST' and request.FILES['image']:
+        # Get the uploaded image file
+        uploaded_image = request.FILES['image']
+        
+        # Read the uploaded image
+        image_data = uploaded_image.read()
+        img = image.load_img(io.BytesIO(image_data), target_size=(224, 224))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        
+        # Perform prediction using the loaded model
+        prediction = model.predict(img_array)
+        
+        # Convert the prediction probabilities to class labels
+        class_labels = ['Class 1', 'Class 2', 'Class 3']  # Define your class labels here
+        predicted_class_index = np.argmax(prediction)
+        predicted_class_label = class_labels[predicted_class_index]
+        
+        return render(request, 'front/typedetection.html', {'user_conn': user_conn, 'predicted_class_label': predicted_class_label})
+    
+    return render(request, 'front/typedetection.html', {'user_conn': user_conn})

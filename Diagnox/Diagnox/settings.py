@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
-    'rendezvous.apps.RendezvousConfig'
-
+    'rendezvous.apps.RendezvousConfig',
+    'forum.apps.ForumConfig'
 ]
 
 MIDDLEWARE = [
@@ -142,3 +142,6 @@ STATICFILES_DIRS = [
 ]
 APPEND_SLASH = False
 
+# settings.py
+
+LOGIN_URL = '/signin'

@@ -20,6 +20,7 @@ from . import views
 from accounts import views as v2
 from django.conf import settings
 from django.conf.urls.static import static
+from rendezvous import views as vr
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +33,11 @@ urlpatterns = [
     path('profile/picture/upload/', views.profile_picture_upload, name='profile_picture_upload'),
     path('form',views.formulaire),
     path('chatpal/', views.chatpal, name='chatpal'),
+    path('rendezvous',vr.listDoc , name="listdoc"),
+    path('rendezvous/form/<int:doctor_id>/',vr.create_rendezvous , name="rndvForm"),
+    path('fetch_time_slots', vr.fetch_time_slots, name='fetch_time_slots'),
+    path('rendezvous/list', vr.showListDocRdv, name='showListDocRdv'),
+    path('fetch_dr_rdvs/', vr.listDocRdv, name='fetch_dr_rdvs'),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

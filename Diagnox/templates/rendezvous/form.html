@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="mt-5">Create a medical appointment</h1>
+    <div id="calendar"></div>
+    <form method="post" id="rendezvous-form"  action="{% url 'rndvForm' doctor_id=doctor_id %}">
+        {% csrf_token %}
+        <div class="form-group" style="display:none;">
+            <label for="id_date">Date:</label>
+            <input type="text" name="date" id="id_date">
+        </div>    
+        <div class="form-group">
+          <label for="id_note">Appointment note</label>
+          <textarea class="form-control" name="note" cols="40" rows="10" id="id_note"></textarea>
+        </div>        
+        <button type="submit" class="btn btn-primary mt-3" id="open-modal-btn">Select Time</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap Modal -->
+  <div class="modal fade" id="timeSelectionModal" tabindex="-1" role="dialog" aria-labelledby="timeSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="timeSelectionModalLabel">Select Time</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <label for="timeSelection">Select a time:</label>
+          <select class="form-control" id="timeSelection">
+            <option>Loading...</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="close-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="confirm-time-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid', 'timeGrid', 'interaction'], // Add 'interaction' plugin for selecting dates
+        defaultView: 'dayGridMonth',
+        selectable: true,
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay' // Include timeGrid views in the header
+        },
+        events: [],
+        validRange: {
+            start: today, // Disable dates before today
+        },
+        select: function (info) {
+            // Change the view to timeGridDay
+
+            // Scroll to the selected time
+            calendar.scrollToTime(info.start);
+
+            // Store the selected date in a hidden input field
+            document.getElementById('id_date').value = info.startStr;
+            var selectedDate = document.getElementById('id_date').value;
+            var doctorId = '{{ doctor_id }}';  // Assuming you have doctor_id in your context
+
+                  // Send AJAX request to fetch time slots
+            $.ajax({
+              url: '/fetch_time_slots',
+              method: 'GET',
+              data: {
+                date: selectedDate,
+                start_time: '08:00',
+                end_time: '17:00',
+                doctor_id: doctorId
+              },
+              success: function (response) {
+                updateDropdown(response.time_slots);
+              },
+              error: function () {
+                alert('Error fetching time slots.');
+                updateDropdown([]);
+              }
+            });
+            // Open the modal for time selection
+            $('#timeSelectionModal').modal('show');
+        }
+    });
+    calendar.render();
+    function updateDropdown(timeSlots) {
+
+      
+      var select = $(".modal #timeSelection");
+      var dropdown = select.next('.nice-select');
+
+      // Remove all existing options
+      dropdown.find('ul.list').empty();
+
+      select.empty()
+      dropdown.find('ul.list').empty();
+      dropdown.find('.current').text('Loading...');
+      // Append new options
+      timeSlots.forEach(function(option) {
+
+          var newSelectOption = $("<option>").text(option.range).val(option.value);
+          select.append(newSelectOption);
+          
+          var newOption = $("<li>").addClass('option').attr('data-value', option.value).text(option.range);
+          dropdown.find('ul.list').append(newOption);
+      });
+      if(timeSlots.length>0) {
+        dropdown.find('.current').text('Selecte a slot');
+      } else {
+        dropdown.find('.current').text('No available time slots');
+      }
+      // Update the current selected option text (if needed)
+
+      dropdown.disabled = false;
+    }
+
+    // Handle time confirmation
+    document.getElementById('confirm-time-btn').addEventListener('click', function () {
+        var selectedDate = document.getElementById('id_date').value;
+        var selectedTime = document.getElementById('timeSelection').value;
+        var selectedDateTime = selectedDate + 'T' + selectedTime;
+
+        // You can do something with the selected date and time, like submitting the form
+        // For example:
+        // document.getElementById('rendezvous-form').submit();
+
+        // For now, just log it
+        console.log('Selected date and time:', selectedDateTime);
+        console.log('Selected date and time object:', new Date(selectedDateTime));
+
+        document.getElementById('id_date').value=selectedDateTime;
+
+        // Close the modal
+        $('#timeSelectionModal').modal('hide');
+    });
+
+    // Handle time confirmation
+    document.getElementById('close-btn').addEventListener('click', function () {
+        // Close the modal
+        $('#timeSelectionModal').modal('hide');
+    });
+});
+</script>
+
+{% endblock %}

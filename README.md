@@ -25,6 +25,7 @@ This project focuses on improving lung cancer detection through a multidisciplin
 7. **Statistical Analysis of Patient Data**  
    By analyzing patient data collected through forms, we gain insights into risk factors, disease progression, and treatment outcomes. This helps clinicians make more informed decisions, improving patient care. 📈👨‍⚕️👩‍⚕️
 
+
 ## How to Run the Project
 
 To run this Django project locally, follow these steps:
